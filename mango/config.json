@@ -1,0 +1,7 @@
+{
+	"sDbHost" : "localhost",
+	"sDbDatabase" : "limesurvey",
+	"sDbUser" : "limesurvey",
+	"sDbPassword" : "limesurvey",
+	"sInstallFolder" : "/"
+}

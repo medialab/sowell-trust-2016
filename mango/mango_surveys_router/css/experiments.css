@@ -1,0 +1,26 @@
+form {
+	margin-bottom: 50px;
+}
+
+.btn-cancel,
+.btn-save,
+.btn-delete,
+.delete-game {
+	margin-right: 10px;
+}
+
+.btn-primary,
+.add-game,
+.delete-game {
+	margin-right: 10px;
+	padding: 7px 14px;
+}
+
+input[type=checkbox] {
+	margin: 0 3px;
+}
+
+.btn-export-labyrinth > a {
+	color: white;
+	text-decoration: none;
+}
