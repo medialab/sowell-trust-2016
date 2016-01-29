@@ -40,4 +40,7 @@ phpci.yml
 /themes/
 /third_party/
 /tmp/
+/upload/surveys
+/upload/labels
+/upload/images
 !/upload/templates/mango/*
