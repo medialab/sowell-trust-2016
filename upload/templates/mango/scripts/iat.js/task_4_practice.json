@@ -1,0 +1,19 @@
+[
+  {
+    "type": "untrustworthy",
+    "items": [
+      "corrupt", "dishonest", "lying", "untruthful", "incapable",
+      "unreliable", "unresponsive", "unable", "biased", "illegitimate",
+      "unethical", "immoral"
+    ]
+  },
+  {
+    "type":"trustworthy",
+    "items": [
+      "ethical", "honest", "principles", "truthful", "credible",
+      "competent", "competent", "fair", "transparent", "frank",
+      "just", "unbiased", "incorruptible", "moral", "principled",
+      "responsive", "able"
+    ]
+  }
+]

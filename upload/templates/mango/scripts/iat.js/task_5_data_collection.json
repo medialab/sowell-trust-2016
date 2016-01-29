@@ -1,0 +1,24 @@
+[
+  {
+    "type": "untrustworthy / private sector",
+    "items": [
+      "corrupt", "dishonest", "lying", "untruthful", "incapable",
+      "unreliable", "unresponsive", "unable", "biased", "illegitimate",
+      "unethical", "immoral", "sales", "manufacturing", "consulting",
+      "auditing", "branding", "business", "industry", "marketing",
+      "inventories", "start-up", "return on investment", "customers"
+    ]
+  },
+  {
+    "type": "trustworthy / government",
+    "items": [
+      "ethical", "honest", "principles", "truthful", "credible",
+      "competent", "competent", "fair", "transparent", "frank",
+      "just", "unbiased", "incorruptible", "moral", "principled",
+      "responsive", "able", "senate", "house of representatives",
+      "president", "constitution", "federal regulation",
+      "federal government", "federal law", "fiscal policy",
+      "foreign policy", "national budget", "public administration"
+    ]
+  }
+]

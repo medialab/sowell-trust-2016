@@ -1,0 +1,35 @@
+[
+  {
+    "type": "government",
+    "items": [
+      "senate",
+      "house of representatives",
+      "president",
+      "constitution",
+      "federal regulation",
+      "federal government",
+      "federal law",
+      "fiscal policy",
+      "foreign policy",
+      "national budget",
+      "public administration"
+    ]
+  },
+  {
+    "type": "private sector",
+    "items": [
+      "sales",
+      "manufacturing",
+      "consulting",
+      "auditing",
+      "branding",
+      "business",
+      "industry",
+      "marketing",
+      "inventories",
+      "start-up",
+      "return on investment",
+      "customers"
+    ]
+  }
+]
