@@ -222,7 +222,7 @@ if (!window.$ || !window._ || !window.IAT) {
               console.warn('no item found for type', questionSubData.type);
             }
 
-            questionSubData.type = child.textContent;
+            questionSubData.type = child.innerHTML;
           } else if (questionSubData.type && !questionSubData.items) {
             var items;
             try {
