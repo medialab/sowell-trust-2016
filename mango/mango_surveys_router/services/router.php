@@ -232,7 +232,7 @@ class Router {
 					}
 				}
 			} else {
-				$sUrl = $sRootUrl . "index.php?r=survey/index/sid/$iSurveyId/lang/" . $this->sLang . "/token/$sToken";
+				$sUrl = $sRootUrl . "index.php?r=survey/index/sid/$iSurveyId/lang/" . $this->sLang . "/token/$sToken/xpid/$iExperimentId";
 			}
 		}
 		if(isset($_GET) && isset($_GET['redirect'])) {

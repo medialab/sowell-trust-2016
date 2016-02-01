@@ -117,8 +117,7 @@ class Experiment {
 
 			// Create a matching table in mango_iat_panel_split.
 			// It helps dividing the panel into 50/50 for 2 differents versions of IAT.
-			$insertId = $this->oDbConnection->insert_id;
-			$iatQuery = "INSERT INTO mango_iat_panel_split (experiment_id, experiment_name, iat_version) VALUES ($insertId, '$sExperimentName', 0)";
+			$iatQuery = "INSERT INTO mango_iat_panel_split (experiment_id, experiment_name, iat_version) VALUES ($iExperimentId, '$sExperimentName', 0)";
 			return $this->oDbConnection->query($iatQuery);
 
 		// If this experiment already exists, update it

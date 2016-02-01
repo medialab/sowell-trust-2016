@@ -7,6 +7,25 @@ if (!window.$ || !window._ || !window.IAT) {
   // If following marker exists in survey title, IAT single-page is triggered.
   var MARKER = 'IAT';
 
+  // There are 7 blocks. Let's call them A, B, C, D, E, F, G.
+  // We want to have 50% of participants going through these blocks in
+  // the regular order (A, B, C, D... G). Then we want the other 50% to go
+  // through another order, that will specify normal order will interverted
+  // display (order 1 display element n to the left first... order 2 does the opposite).
+  // Second order is A, C, B, E, D, G, F.
+  // We poll a table (mango_iat_panel_split) to know, at runtime, which order to display.
+  // The blockOrder variable will hold an integer — 0 or 1, 0 being the normal order,
+  // 1 being the inverted order.
+  // The services we call is defined in `mango/mango_surveys_router/services/iat_split_panel.php`.
+  var blockOrder = 0;
+
+  function getBlockOrder() {
+    return $.post('/mango//mango_surveys_router/services/iat_split_panel.php', {
+      'nextorder': true,
+      'xpid': parseInt(window.location.href.substr(window.location.href.lastIndexOf('/') + 1))
+    });
+  }
+
   $(function() {
     // Declare and/or assign parsable DOM node,
     // jQuery-wrapped DOM for building single page app,
@@ -50,63 +69,72 @@ if (!window.$ || !window._ || !window.IAT) {
       return;
     }
 
-    // Parse the welcome page and extract relevant data from it,
-    // including form information to spoof submission via AJAX,
-    // and DOM elements we need.
-    welcomePageObject = getScrapedWelcomePage();
+    // Get block order.
+    getBlockOrder()
+      .success(function (data) {
+        data = JSON.parse(data);
 
-    // Set up a UI using parsed element.
-    welcomePageObject.$el.css('width', '100%');
-    $('.question_wrapper', welcomePageObject.$el)
-      .css(questionWrapperStyle)
-      .find('.navigator')
-      .css({
-        width: '100%',
-        padding: 0,
-      });
-    $rootView.append(welcomePageObject.$el);
+        if (parseInt(data.status_code) === 200 && data.success) {
+          blockOrder = parseInt(data.order);
+        } else {
+          return console.error('[Mango IAT] Was not able to get block order from DB! Aborting...');
+        }
 
-    // Hijack submit button to prevent regular form submission,
-    // while fetching the actual POST result via ajax.
-    // Get the HTML raw string as a result, DOMize it via jQuery,
-    // and use it as a base to build jsPsych-related content.
-    welcomePageObject.$nextBtn.on('click', function(e) {
-      e.preventDefault();
-      $.ajax({
-        type: 'POST',
-        url: welcomePageObject.requestUrl,
-        data: welcomePageObject.requestBody,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }).success(function(htmlString) {
-        var $domExtract = $(extractNodeTree(htmlString));
-        /*var answerFormMatchingTextareas = prepareFormAnswerMatching($domExtract);
-        console.log('answerFormMatchingTextareas', answerFormMatchingTextareas);*/
-        initIAT(parseForIAT($domExtract))
-          .then(function(results) {
-            console.log('results!!', results);
-            resultsFormData = prepareFormAnswerPostData($(htmlString));
+        // Parse the welcome page and extract relevant data from it,
+        // including form information to spoof submission via AJAX,
+        // and DOM elements we need.
+        welcomePageObject = getScrapedWelcomePage();
 
-            var fieldNames = resultsFormData.fieldnames.split('|');
-            fieldNames.forEach(function(fieldName, index) {
-              resultsFormData[fieldName] = JSON.stringify(results[index]);
-            });
-
-            console.log('resultsFormData', resultsFormData)
-
-            sendResultsToServer(resultsFormData).success(function(serverResponse) {
-              var $serverResponse = $(serverResponse);
-              var nextUrl = $serverResponse.find('#completed-url a').attr('href');
-              if (nextUrl) {
-                window.location.replace(nextUrl);
-              }
-            });
+        // Set up a UI using parsed element.
+        welcomePageObject.$el.css('width', '100%');
+        $('.question_wrapper', welcomePageObject.$el)
+          .css(questionWrapperStyle)
+          .find('.navigator')
+          .css({
+            width: '100%',
+            padding: 0,
           });
-      }).fail(function() {
-        console.error('[Mango IAT] Fetching questions — request failed.');
-        return dispose();
+        $rootView.append(welcomePageObject.$el);
+
+        // Hijack submit button to prevent regular form submission,
+        // while fetching the actual POST result via ajax.
+        // Get the HTML raw string as a result, DOMize it via jQuery,
+        // and use it as a base to build jsPsych-related content.
+        welcomePageObject.$nextBtn.on('click', function(e) {
+          e.preventDefault();
+          $.ajax({
+            type: 'POST',
+            url: welcomePageObject.requestUrl,
+            data: welcomePageObject.requestBody,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }).success(function(htmlString) {
+            var $domExtract = $(extractNodeTree(htmlString));
+            initIAT(parseForIAT($domExtract))
+              .then(function(results) {
+                resultsFormData = prepareFormAnswerPostData($(htmlString));
+
+                var fieldNames = resultsFormData.fieldnames.split('|');
+                fieldNames.forEach(function(fieldName, index) {
+                  resultsFormData[fieldName] = JSON.stringify(results[index]);
+                });
+
+                sendResultsToServer(resultsFormData).success(function(serverResponse) {
+                  var $serverResponse = $(serverResponse);
+                  var nextUrl = $serverResponse.find('#completed-url a').attr('href');
+                  if (nextUrl) {
+                    window.location.replace(nextUrl);
+                  }
+                });
+              });
+          }).fail(function() {
+            console.error('[Mango IAT] Fetching questions — request failed.');
+            return dispose();
+          });
+
       });
+
     });
 
     function verifyIfSinglePageAppIsRequired() {
@@ -340,6 +368,8 @@ if (!window.$ || !window._ || !window.IAT) {
             result.push(questionData);
             questionData = createQuestionData();
           }
+
+          console.log(questionData);
         });
 
       if (result.length !== $questions.length) {
@@ -352,12 +382,31 @@ if (!window.$ || !window._ || !window.IAT) {
         );
       }
 
-      return result;
+      return setBlocksOrder(result, blockOrder);
     }
 
     function initIAT(data) {
       $rootView.html('');
       return IAT.start($rootView, data, 'upload/templates/mango/scripts/iat.js/');
+    }
+
+    /**
+     * Set the order of the blocks of trials, based on the current value of the panel split
+     * (see MySQL table in DB: mango_iat_split_panel).
+     *
+     * @param {array}   blocks     The blocks of trials.
+     * @param {integer} orderValue Either 0 (normal order) or 1 (changed order).
+     */
+    function setBlocksOrder(blocks, orderValue) {
+      if (orderValue === 0) {
+        console.log('[Mango IAT] Block order: normal.');
+        console.log(blocks);
+        return blocks;
+      } else {
+        console.log('[Mango IAT] Block order: opposite.');
+        console.log([blocks[0], blocks[2], blocks[1], blocks[4], blocks[3], blocks[6], blocks[5]]);
+        return [blocks[0], blocks[2], blocks[1], blocks[4], blocks[3], blocks[6], blocks[5]];
+      }
     }
 
     function prepareFormAnswerPostData($domTree) {
@@ -372,19 +421,6 @@ if (!window.$ || !window._ || !window.IAT) {
       });
 
       return resultsFormData;
-    }
-
-    /*function prepareFormAnswerMatching($domTree) {
-      var answerFormMatchingTextareas = [];
-      _.each($domTree.find('.question.answer-item.text-item textarea'), function(textarea) {
-        answerFormMatchingTextareas.push(textarea.name);
-      });
-
-      return answerFormMatchingTextareas;
-    }*/
-
-    function parseTestResults(rawData) {
-
     }
 
     function reconcileResults(answerFormMatchingTextareas, results) {
