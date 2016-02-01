@@ -57,3 +57,11 @@ CREATE TABLE IF NOT EXISTS `mango_results_facilitator` (
   `matching_row_in_table` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY(`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `mango_iat_panel_split` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `experiment_id` int(11) NOT NULL,
+  `experiment_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `iat_version` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;

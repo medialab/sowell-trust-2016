@@ -114,6 +114,13 @@ class Experiment {
 				}
 			}
 			$oResult = $this->oDbConnection->query($sQuery);
+
+			// Create a matching table in mango_iat_panel_split.
+			// It helps dividing the panel into 50/50 for 2 differents versions of IAT.
+			$insertId = $this->oDbConnection->insert_id;
+			$iatQuery = "INSERT INTO mango_iat_panel_split (experiment_id, experiment_name, iat_version) VALUES ($insertId, '$sExperimentName', 0)";
+			return $this->oDbConnection->query($iatQuery);
+
 		// If this experiment already exists, update it
 		} else {
 			$sQuery = "UPDATE mango_experiment SET name = '$sExperimentName', login_phase = $bExperimentLoginPhase, results_phase = $bExperimentResultsPhase, generate_tokens = $bExperimentGenerateTokens, is_over = $bExperimentIsOver WHERE id = $iExperimentId";

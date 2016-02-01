@@ -246,7 +246,7 @@ $(document).ready(
 						type: 'POST',
 						url: 'save_experiment.php',
 						data: {experiment_id: iExperimentId, experiment_name: sExperimentName, experiment_login_phase: bExperimentLoginPhase, experiment_results_phase: bExperimentResultsPhase, experiment_generate_tokens : bExperimentGenerateTokens, experiment_is_over : bExperimentIsOver, experiment_games: aExperimentGames},
-						success: function() {
+						success: function(data) {
 							// Enable interaction buttons
 							resetForm();
 							$('.messages').append('<div class="alert alert-success">Experiment added!</div>').delay(10000).slideUp(1000);

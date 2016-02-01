@@ -2,7 +2,7 @@
 
 /**
  * @author Anne L'Hôte <anne.lhote@gmail.com>
- * 
+ *
  * Called by scripts/experiments.js
  **/
 
@@ -17,6 +17,7 @@ $bExperimentIsOver			= $_POST['experiment_is_over'];
 $aExperimentGames			= $_POST['experiment_games'];
 
 $oExperimentClass			= new Experiment();
-$oExperimentClass->saveExperiment($iExperimentId, $sExperimentName, $bExperimentLoginPhase, $bExperimentResultsPhase, $bExperimentGenerateTokens, $bExperimentIsOver, $aExperimentGames);
+$result = $oExperimentClass->saveExperiment($iExperimentId, $sExperimentName, $bExperimentLoginPhase, $bExperimentResultsPhase, $bExperimentGenerateTokens, $bExperimentIsOver, $aExperimentGames);
+echo json_encode(['success' => $result]);
 
 ?>
